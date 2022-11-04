@@ -75,8 +75,7 @@ class Generator:
 
 if __name__ == "__main__":
     KeyGen = Generator()
-    
-    
+    Generator.massKeyGen(KeyGen, 500000)
     
     KeyGen.close()
     
