@@ -1,3 +1,5 @@
 
 *.sqlite
 Cryptographie appliqué/KeyStore.sqlite
+Cryptographie appliqué/KeyStore.sqlite
+*.sqlite

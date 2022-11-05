@@ -32,7 +32,7 @@ class Generator:
         """
         Return list of Tuple
         
-        [  (<modulus>, <iteration>, <bisize>), ...  ]
+        [  (<modulus>, <iteration>, <bitsize>), ...  ]
         """
         duplicates = []
         duplicateFinderPayload = """
@@ -75,7 +75,8 @@ class Generator:
 
 if __name__ == "__main__":
     KeyGen = Generator()
-    Generator.massKeyGen(KeyGen, 500000)
+    
+    Generator.massKeyGen(KeyGen, 500000, [1024, 2048])
     
     KeyGen.close()
     
