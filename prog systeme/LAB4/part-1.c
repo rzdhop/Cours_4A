@@ -6,25 +6,28 @@
 
 
 int mainPPID(pid_t Cpid){
-    char fatherPayload[1024];
-    sprintf(&fatherPayload, "je suis le pere et mon PID est %d", getpid());
+    int inputChar = NULL;
+
+    printf("PID pere : %d | PID fils : %d \n", getpid(), Cpid);
+    while(inputChar != 'p'){
+        scanf("%c", &inputChar);
+    }
+    kill(Cpid, SIGINT);
     
     wait();
 
-    FILE *fileP = fopen("fichier.txt","a");
-    fputs(fatherPayload, fileP);
-    fclose(fileP);
-
+    while (1)
+    {
+        /* code */
+    }
+    
     return 0;
 }
 
 int mainCPID(){
-    char childPayload[1024];
-    sprintf(&childPayload, "je suis le fils et mon PID est %d\n", getpid());
+    printf("\tPPID : %d | PID : %d \n", getppid(), getpid());
     
-    FILE *fileC = fopen("fichier.txt","a");
-    fputs(childPayload, fileC);
-    fclose(fileC);
+    sigwait("", SIGINT);
 
     return 0;
 }

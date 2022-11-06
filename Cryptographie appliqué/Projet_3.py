@@ -1,5 +1,6 @@
 import rsa
 import sqlite3
+from math import gcd
 
 class Generator:
     def __init__(self):
@@ -60,7 +61,43 @@ class Generator:
                             "{str(bitsize)}")
         """)
         self.bdd.commit()
+    
+    def batch_gcd(self):
+        modulusList = []
+        modulusListPayload = "SELECT modulus FROM Keys"
         
+        print("Chargement des modulus...")
+        for row in self.bddCursor.execute(modulusListPayload).fetchall():
+            print(f"modulus : {row[0][:40]+'...'}", end="\r")
+            modulusList.append(row[0])
+            
+        print(f"\nTerminé ! {len(modulusList)} modulus chargés")
+        print("Commencement de l'attaque gcd !")
+        diviseursCommuns = []
+        index = 0
+        
+        for modulusDeReference in modulusList:
+            modulusDeReference = int(modulusDeReference)
+            for modulusSecond in modulusList:
+                modulusSecond = int(modulusSecond)
+                if modulusDeReference == modulusSecond:
+                    continue
+                print(f"Nombre de diviseur commun trouvé : {len(diviseursCommuns)} | Passage : {index}", end="\r")
+                index += 1
+                if gcd(modulusDeReference, modulusSecond) > 1:
+                    diviseursCommuns.append((modulusDeReference, modulusSecond))
+
+        if len(diviseursCommuns):
+            exportFilename = "DiviseursCommuns.txt"
+            with open(exportFilename, "w") as fichierDiviseursCommuns:
+                for coupleDeDiviseurCommun in diviseursCommuns:
+                    fichierDiviseursCommuns.write(f"{coupleDeDiviseurCommun[0]} {coupleDeDiviseurCommun[1]}")        
+            print(f"Liste des couples ayant un diviseurs commun exporté dans {exportFilename}")
+        else: 
+            print("Aucun diviseurs commun n'a été trouvé")
+            
+
+    
     def close(self):
         self.bddCursor.close()
         self.bdd.close()
@@ -76,7 +113,7 @@ class Generator:
 if __name__ == "__main__":
     KeyGen = Generator()
     
-    Generator.massKeyGen(KeyGen, 500000, [1024, 2048])
+    KeyGen.batch_gcd()
     
     KeyGen.close()
     
