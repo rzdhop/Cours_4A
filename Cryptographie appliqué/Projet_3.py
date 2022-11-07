@@ -4,13 +4,13 @@ from math import gcd
 
 class Generator:
     def __init__(self):
-        self.bddName = "KeyStore.sqlite"
+        self.bddName = "KeyStore_1573275.sqlite"
         self.bdd = self._initBDD()
         self.bddCursor = self.bdd.cursor()
         
     def _initBDD(self, database:str = None) -> sqlite3.Connection:
         database = self.bddName if database is None else database
-        bdd =  sqlite3.connect(database, check_same_thread=False)
+        bdd =  sqlite3.connect(database)
         cursor = bdd.cursor()
         cursor.execute("""CREATE TABLE IF NOT EXISTS Keys (
             id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT,
@@ -54,6 +54,11 @@ class Generator:
         return duplicates
     
     def InsertKey(self, key:tuple):
+        """
+        Insert a tuple of a specific form into the 'self.bddName'
+        
+            (modulus, exponant, bitsize) -> tuple
+        """
         (modulus, exponant, bitsize) = key
         self.bddCursor.execute(f"""INSERT INTO Keys (modulus,exponant,bitsize) VALUES (
                             "{str(modulus)}", 
@@ -74,18 +79,18 @@ class Generator:
         print(f"\nTerminé ! {len(modulusList)} modulus chargés")
         print("Commencement de l'attaque gcd !")
         diviseursCommuns = []
+        indexPrincipal = 0
         index = 0
         
         for modulusDeReference in modulusList:
             modulusDeReference = int(modulusDeReference)
-            for modulusSecond in modulusList:
+            for modulusSecond in modulusList[indexPrincipal+1:]:
                 modulusSecond = int(modulusSecond)
-                if modulusDeReference == modulusSecond:
-                    continue
                 print(f"Nombre de diviseur commun trouvé : {len(diviseursCommuns)} | Passage : {index}", end="\r")
                 index += 1
                 if gcd(modulusDeReference, modulusSecond) > 1:
                     diviseursCommuns.append((modulusDeReference, modulusSecond))
+            indexPrincipal +=1
 
         if len(diviseursCommuns):
             exportFilename = "DiviseursCommuns.txt"
@@ -113,9 +118,8 @@ class Generator:
 if __name__ == "__main__":
     KeyGen = Generator()
     
+    Generator.massKeyGen(KeyGen, 500, [128, 256])
+    KeyGen.CheckDuplicate()
     KeyGen.batch_gcd()
     
     KeyGen.close()
-    
-    
-    
