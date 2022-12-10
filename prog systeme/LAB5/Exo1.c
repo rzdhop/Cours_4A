@@ -40,7 +40,6 @@ int main(){
         threadsContext[i]->routineArgs = args;
         pthread_create(&threads_id[i], NULL, routine, (void*)args);
         threadsContext[i]->id = threads_id[i];
-        
     }
     
     for(int i=0; i < NB_THREADS; i++){

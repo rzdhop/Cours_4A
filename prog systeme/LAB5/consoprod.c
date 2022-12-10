@@ -20,7 +20,7 @@ struct fifo {
 };
 
 // Fonction d'initialisation de la fifo
-void init_fifo(struct fifo *f) {   
+void init_fifo(struct fifo *f) {
     f->ptr_ecrivain = 0;
     f->ptr_lecteur = 0;
     f->nb_elem = 0;
